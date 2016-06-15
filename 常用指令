@@ -1,0 +1,7 @@
+gcc -O1 -S code.c	#产生汇编代码，一级优化
+
+gcc -O1 -c code.c	#汇编，并编译该代码
+
+objdump -d code.o	#反汇编
+
+

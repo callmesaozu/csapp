@@ -1,0 +1,219 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+typedef unsigned char * byte_pointer;
+
+//判断是否是小端机
+bool is_little_endian()
+{
+	int i = 1;
+	byte_pointer start = &i;
+	if(start[0] == 0x1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//返回一个数，由x的最低有效字节和y的剩下字节组成
+int join(int x, int y)
+{
+	unsigned ux = x & 0xf;
+	unsigned uy = y & (~0xf);
+	return ux | uy;
+}
+
+//x第i字节被替换成b，并返回
+unsigned replace_byte(unsigned x, unsigned char b, int i)
+{
+	if((0 <= 0) && (i < sizeof(unsigned)))
+	{
+		unsigned ub = b << (i << 3);
+		unsigned cb = ~ub;
+		return (x&cb)|ub;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+//x是否全是1
+bool is_all_one(int x)
+{
+	return !(~x);
+}
+
+//x是否全是0
+bool is_all_zero(int x)
+{
+	return !(x);
+}
+
+//x最高字节是否全是1
+bool is_high_one(int x)
+{
+	int byte = (sizeof(int) - 1) << 3;
+	unsigned high = x >> byte;
+	return !(~high);
+}
+
+//x最低字节是否全是0
+bool is_low_zero(int x)
+{
+	int byte = (sizeof(int) - 1) << 3;
+	unsigned low = x << byte;
+	return !(low);
+}
+
+//判断是否是逻辑右移
+bool int_shift_are_logical()
+{
+	unsigned bytes = (sizeof(int) << 3);	//获取整数位数
+	int i = 1 << (bytes - 1); 				//使最高位为1
+	i >>= (bytes - 1);
+	return ~i;
+}
+
+//算术位移实现逻辑位移
+unsigned srl(unsigned x, int k)
+{
+	unsigned xsra = (int)x >> k;
+	int r = (-1) << (8 * sizeof(int) - k);
+	r = ~r;
+	return r & xsra;
+}
+
+//逻辑位移实现算术位移
+int sra(int x, int k)
+{
+	int xsrl = (unsigned)x >> k;
+	unsigned r = (-1) << (8 * sizeof(int) - k);
+	unsigned ixsrl = xsrl << 1;
+	unsigned ione = 1 << (8 * sizeof(int) - k + 1);
+	ixsrl &= ione;
+	r += ixsrl;
+	return xsrl | r;
+}
+
+//x是否有偶数位为1, 文中假设是32位， 但我用64位测试
+bool is_any_even_one(unsigned x)
+{
+	return x & 0x55555555;
+}
+
+//判断x中1的个数是否为偶数位，若是则1， 若否则0， 假设是32位int
+bool is_even_one(unsigned x);
+
+//保留整型最左端的有效数字32位int
+int leftmost_one(unsigned x);
+
+//返回一个整型，他的低n位都是1，高位为0
+int lower_bits(int n);
+
+//将x的位向右循环n位，32位整型
+unsigned rotate_right(unsigned x, int n);
+
+//如果x能被表示n位的补码，则返回1
+bool fit_bits(int x, int n);
+
+int get_largeststep();	//获得long long int 的最大阶乘数
+
+int main()
+{
+	printf("%d\n", (int)is_little_endian());
+	printf("0x%x join 0x%x = 0x%x\n", 0x12, 0x1dad2, join((int)0x12, (int)0x1dad2));
+	char a = 'a';
+	printf("replace_byte(%x, %c, %d) = 0x%x\n", 0x12, a, 2, replace_byte(0x12, a, 2));
+	int x = -1;
+	printf(" is 0x%x high one? %d\n", x, is_high_one(x));
+	printf(" int_shift_are_logical? %d\n", int_shift_are_logical());
+	printf("0x%x >> 2: 0x%x\n", -1, sra(-1, 2));
+	printf("is 0x%x any even one %d\n", 2, is_any_even_one((unsigned)2));
+	printf("is 0x%x even one? %d \n", 0xe, is_even_one(0xe));
+	printf("0x%x the most left one is 0x%x\n", 0xe, leftmost_one(0xe));
+	printf("low %d is 0x%x\n", 3, lower_bits(3));
+	printf("0x%x right rotate %d is 0x%x\n", 0x234578, 8, rotate_right(0x234578, 8));
+	printf("max int = %d\n", (int)INT_MAX);
+	printf("sizeof long long int = %d\n", (int)sizeof(long long));	//64位，max 9223372036854775807
+	get_largeststep();
+	return 0;
+}
+
+bool is_even_one(unsigned x)
+{
+	unsigned high = x >> 16;			
+	unsigned xor = high ^ x;	//有效位数为低16位
+	high = xor >> 8;
+	xor ^= high;	//有效位数为低8位
+	high = xor >> 4;
+	xor ^= high;	//有效位数为低4位
+	high = xor >> 2;
+	xor ^= high;	//有效位数为低2位
+	high = xor >> 1;
+	xor ^= high;	//有效位数为低1位
+	xor &= 0x00000001;
+	return !xor;	//有效位数为1位	//如果为1，则说明含1的位数为奇数位
+}
+
+int leftmost_one(unsigned x)
+{
+	x |= (x >> 1);
+	x |= (x >> 2);
+	x |= (x >> 4);
+	x |= (x >> 8);
+	x |= (x >> 16);
+	return (x ^ (x >> 1));
+}
+
+int lower_bits(int n)
+{
+	unsigned sb = - 1;
+	sb >>= (32 - n);
+	return sb;
+}
+unsigned rotate_right(unsigned x, int n)
+{
+	unsigned y = 1 << n;
+	--y;
+	y &= x;
+	y <<= 32 - n -1;
+	y <<= 1;
+	x >>= n;
+	return (x | y);
+}
+
+bool fit_bits(int x, int n)
+{
+	x >>= (n - 1);
+	x << 1;
+	return (!x | (x == -1));
+}
+
+//2.71
+/*int xbyte(packed_t word, int bytenum)*/
+/*{*/
+/*	return ((word << ((3 - bytenum) << 3)) >> 24);*/
+/*}*/
+
+
+int get_largeststep()
+{
+	long long int step = 1;
+	long long int stepMult = 1;
+	long long int tempStep = 0;
+	while((!tempStep) || (stepMult / tempStep == (step - 1)))
+	{
+		tempStep = stepMult;
+		stepMult *= step;
+		step++;
+	}
+	step -= 2;
+	printf("the largest step is %d\n", (int)step);
+	return (int)step;		
+	
+}
