@@ -89,7 +89,38 @@ bool tsub_ok(int x, int y)	//判断x-y是否能够相减
 {
 	int t = sizeof(int);
 	int m = 1 << t * 8 - 1;
-	return (y != m) && (tadd_ok(x, -y));}
+	return (y != m) && (tadd_ok(x, -y));
+}
+
+typedef struct 
+{
+	char *a;
+	short b;
+	char c;
+	char d;
+	double e;
+	long long f;
+	float g;
+	void *h;
+} U3;
+
+typedef struct 
+{
+	double a;
+	long long b;
+	float c;
+	char *d;
+	void *e;
+	short f;
+	char g;
+	char h;
+} U4;
+
+int func(int x, int *y)
+{
+	printf("x = %d, *y = %d\n", x, *y);
+	return 0;
+}
 
 int main()
 {
@@ -198,14 +229,28 @@ int main()
 /*	printf("x = 0x%x = %d\n", x, x);*/
 /*	printf("~x = 0x%x = %d\n", z, z);*/
 
-	float x = 1.0;
-	show_float(x);	//大端顺序是3f800000;
-	float y = 3510593.0;
-	show_float(y);	//大端顺序是4a564504;
+/*	float x = 1.0;*/
+/*	show_float(x);	//大端顺序是3f800000;*/
+/*	float y = 3510593.0;*/
+/*	show_float(y);	//大端顺序是4a564504;*/
 
-	printf("(int)+1e10 = %d\n", (int)+1e10);	//我的是2147483647
+/*	printf("(int)+1e10 = %d\n", (int)+1e10);	//我的是2147483647*/
 
-	printf("size of char * = %d\n", (int)sizeof(char*));
+/*	printf("size of char * = %d\n", (int)sizeof(char*));*/
+/*	printf("size of char   = %d\n", (int)sizeof(char));*/
+	
+	short *p;
+	short d = 3;
+	p = &d;
+	printf("p = %u\n", (int *)p);
+	printf("(int *)p + 7 = %u\n", (int *)p + 7);
+	printf("(int *)(p + 7) = %u\n", (int *)(p + 7));
+	printf("sizeof p = %d\n", (int)sizeof(p));
+	
+	int (*fp)(int , int *);
+	fp = func;
+	int y = 1;
+	int result = fp(3, &y);
 
 	return 0;
 }

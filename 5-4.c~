@@ -1,0 +1,32 @@
+typedef int data_t;
+typedef struct
+{
+	long int len;
+	data_t *data;
+} vec_rec, *vec_ptr;
+
+vec_ptr new_vec(long int len)
+{
+	vec_ptr result = (vec_ptr)malloc(sizeof(vec_rec));
+	if(!result)
+	{
+		return NULL;
+	}
+	result->len = len;
+	if(len > 0)
+	{
+		data_t *data = (data_t *)calloc(len, sizeof(data_t));
+		if(!data)
+		{
+			free((void *)result);
+			return NULL;
+		}
+		result->data = data;
+	}
+	else
+	{
+		result->data = NULL;
+	}
+	return result;
+}
+	

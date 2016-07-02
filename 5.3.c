@@ -1,0 +1,88 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef int data_t;
+typedef struct
+{
+	long int len;
+	data_t *data;
+} vec_rec, *vec_ptr;
+
+//这个函数增加了许多边界检查
+vec_ptr new_vec(long int len);
+//如果index合理，那么将v中的第index个data_t储存到*dest中，并返回1，否则返回0
+int get_vec_element(vec_ptr v, long int index, data_t *dest);
+long int vec_length(vec_ptr v);
+//如果是下面这种，combine1计算v中data_t元素的加法
+#define IDENT 0
+#define OP +
+//如果是下面这种，combine1计算v中data_t元素的乘法
+//#define IDENT 1;
+//#define OP *
+
+void combine1(vec_ptr v, data_t *dest);
+
+int main()
+{
+	vec_ptr teVec;
+	teVec = new_vec(331L);
+	data_t dest;
+	combine1(teVec, &dest);
+	printf("combine1 %d\n", (int)dest);
+	return 0;
+}
+
+vec_ptr new_vec(long int len)
+{
+	vec_ptr result = (vec_ptr)malloc(sizeof(vec_rec));
+	if(!result)
+	{
+		return NULL;
+	}
+	result->len = len;
+	if(len > 0)
+	{
+		data_t *data = (data_t *)calloc(len, sizeof(data_t));
+		if(!data)
+		{
+			free((void *)result);
+			return NULL;
+		}
+		result->data = data;
+	}
+	else
+	{
+		result->data = NULL;
+	}
+	return result;
+}
+
+
+int get_vec_element(vec_ptr v, long int index, data_t *dest)
+{
+	if(index < 0 || index >= v->len)
+	{
+		return 0;
+	}
+	*dest = v->data[index];
+	return 1;
+}
+
+long int vec_length(vec_ptr v)
+{
+	return v->len;
+}
+
+void combine1(vec_ptr v, data_t *dest)
+{
+	long int i;
+	
+	*dest = IDENT;
+	for(i = 0; i < vec_length(v); i++)
+	{
+		data_t val;
+		get_vec_element(v, i, &val);
+		*dest = *dest OP val;
+	}
+}
+	

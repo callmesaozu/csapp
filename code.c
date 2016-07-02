@@ -1,8 +1,26 @@
-int accum = 0;
+#include <stdio.h>
 
-int sum(int x, int y)
+char *gets(char *s)
 {
-	int t = x + y;
-	accum += t;
-	return t;
+	int c;
+	char *dest = s;
+	int gotchar = 0;
+	while((c = getchar()) != '\n' && c != EOF)
+	{
+		*dest++ = c;
+		gotchar = 1;
+	}
+	*dest++ = '\0';
+	if(c == '\0' && !gotchar)
+		return NULL;
+	return s;
+}
+
+void puts(char *s);
+
+void echo()
+{
+	char buf[8];
+	gets(buf);
+
 }
