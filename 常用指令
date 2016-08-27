@@ -7,3 +7,6 @@ objdump -d code.o	#反汇编
 gcc -O1 -o p p1.c p2.c #gcc一级优化(一般采用二级优化，将p1.c、p2.c生成目标文件)
 
 
+gcc -m32	#产生32位代码
+
+

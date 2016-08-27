@@ -40,6 +40,11 @@ int main()
 	printf("(int *)p + 7 = %u\n", (int *)p + 7);
 	printf("(int *)(p + 7) = %u\n", (int *)(p + 7));
 	printf("sizeof p = %d\n", (int)sizeof(p));
+	
+	int (*fp)(int , int *);
+	fp = func;
+	int y = 1;
+	int result = fp(3, &y);
 	return 0;
 }
 

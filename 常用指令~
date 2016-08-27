@@ -4,4 +4,6 @@ gcc -O1 -c code.c	#汇编，并编译该代码
 
 objdump -d code.o	#反汇编
 
+gcc -O1 -o p p1.c p2.c #gcc一级优化(一般采用二级优化，将p1.c、p2.c生成目标文件)
+
 

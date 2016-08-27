@@ -1,0 +1,67 @@
+o1优化：
+combine4:
+.LFB47:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	pushq	%rbx
+	.cfi_def_cfa_offset 24
+	.cfi_offset 3, -24
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 32
+	movq	%rsi, %rbp
+	movq	(%rdi), %rbx
+	movl	$0, %eax
+	call	get_vev_start
+	testq	%rbx, %rbx
+	jle	.L29
+	movl	$0, %ecx
+	movl	$0, %edx
+	cltq
+.L28:
+	addl	(%rax,%rdx,4), %ecx
+	addq	$1, %rdx
+	cmpq	%rbx, %rdx
+	jne	.L28
+	jmp	.L27
+.L29:
+	movl	$0, %ecx
+O2优化	
+combine4:
+.LFB47:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	xorl	%eax, %eax
+	movq	%rsi, %rbp
+	pushq	%rbx
+	.cfi_def_cfa_offset 24
+	.cfi_offset 3, -24
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 32
+	movq	(%rdi), %rbx
+	call	get_vev_start
+	xorl	%ecx, %ecx
+	testq	%rbx, %rbx
+	jle	.L33
+	xorl	%edx, %edx
+	cltq
+	.p2align 4,,10
+	.p2align 3
+.L34:
+	addl	(%rax,%rdx,4), %ecx
+	addq	$1, %rdx
+	cmpq	%rbx, %rdx
+	jne	.L34
+.L33:
+	movl	%ecx, 0(%rbp)
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 24
+	popq	%rbx
+	.cfi_def_cfa_offset 16
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc

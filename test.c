@@ -41,6 +41,8 @@ int main()
 	printf("(int *)(p + 7) = %u\n", (int *)(p + 7));
 	printf("sizeof p = %d\n", (int)sizeof(p));
 	
+	printf("sizeof short is %d\n", (int)sizeof(short));
+	
 	int (*fp)(int , int *);
 	fp = func;
 	int y = 1;

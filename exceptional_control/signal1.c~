@@ -1,0 +1,117 @@
+#include "csapp.h"
+
+
+/*void handler1(int sig)*/
+/*{*/
+/*	pid_t pid;*/
+/*	*/
+/*	if((pid = waitpid(-1, NULL, 0)) < 0)	//此处因为发生了阻塞，所以以后的僵尸进程都丢弃不再回收了，因此只回收2个*/
+/*	{*/
+/*		unix_error("waitpid error");*/
+/*	}*/
+/*	printf("Handler reaped child %d\n", (int)pid);	*/
+/*	Sleep(2);*/
+/*	return;*/
+/*}*/
+
+
+/*void handler2(int sig)*/
+/*{*/
+/*	pid_t pid;*/
+/*	*/
+/*	while((pid = waitpid(-1, NULL, 0)) > 0)*/
+/*	{*/
+/*		printf("Handler reaped child %d\n", (int)pid);	*/
+/*	}*/
+/*	if(errno != ECHILD)*/
+/*		unix_error("waitpid error");*/
+/*	Sleep(2);*/
+/*	return;*/
+/*}*/
+
+
+/*int main()*/
+/*{*/
+/*	int i, n;*/
+/*	char buf[MAXBUF];*/
+/*	*/
+/*	if(signal(SIGCHLD, handler2) == SIG_ERR)*/
+/*	{*/
+/*		unix_error("signal error");*/
+/*	}*/
+/*	*/
+/*	for(i = 0; i < 3; i++)*/
+/*	{*/
+/*		if(Fork() == 0)*/
+/*		{*/
+/*			printf("Hello from child %d\n", (int)getpid());*/
+/*			Sleep(1);*/
+/*			exit(0);*/
+/*		}*/
+/*	}*/
+/*	while((n = read(STDIN_FILENO, buf,sizeof(buf))) < 0)	//解决部分系统read等慢速系统调用被中断后不再继续的情况*/
+/*	{*/
+/*		if(errno != EINTR)									//在这种系统中，当read被中断后，将返回用户一个错误条件，并设置errno = EINTR*/
+/*		{*/
+/*			unix_error("read error");*/
+/*		}*/
+/*	}*/
+/*	*/
+/*	*/
+/*	printf("Parent processing input\n");*/
+/*	while(1)*/
+/*	{*/
+/*		;*/
+/*	}*/
+/*	exit(0);*/
+/*}*/
+
+//以上是用signal设置信号的，用Signal遵循Posix标准更加方便：
+void handler2(int sig)
+{
+	pid_t pid;
+	
+	while((pid = waitpid(-1, NULL, 0)) > 0)
+	{
+		printf("Handler reaped child %d\n", (int)pid);	
+	}
+	if(errno != ECHILD)
+		unix_error("waitpid error");
+	Sleep(2);
+	return;
+} 
+
+int main()
+{
+	int i, n;
+	char buf[MAXBUF];
+	
+	Signal(SIGCHLD, handler2);
+
+	
+	for(i = 0; i < 3; i++)
+	{
+		if(Fork() == 0)
+		{
+			printf("Hello from child %d\n", (int)getpid());
+			Sleep(1);
+			exit(0);
+		}
+	}
+
+	if((n = read(STDIN_FILENO, buf,sizeof(buf))) < 0)				//在这种系统中，当read被中断后，将返回用户一个错误条件，并设置errno = EINTR
+	{
+		unix_error("read error");
+	}
+
+	
+	
+	printf("Parent processing input\n");
+	while(1)
+	{
+		;
+	}
+	exit(0);
+}
+
+

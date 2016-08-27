@@ -28,7 +28,7 @@ int main()
 	teVec = new_vec(331L);
 	data_t dest;
 	combine1(teVec, &dest);
-	printf("combine1 %d\n", (int)*dest);
+	printf("combine1 %d\n", (int)dest);
 	return 0;
 }
 
@@ -79,6 +79,21 @@ void combine1(vec_ptr v, data_t *dest)
 	
 	*dest = IDENT;
 	for(i = 0; i < vec_length(v); i++)
+	{
+		data_t val;
+		get_vec_element(v, i, &val);
+		*dest = *dest OP val;
+	}
+}
+//combine2combine1作出的优化就是把计算长度移出了循环
+//称为代码移动，相对于GCC的O1优化，确实能够提升效率
+void combine2(vec_ptr v, data_t *dest)
+{
+	long int i;
+	
+	*dest = IDENT;
+	long int length = vec_length(v);
+	for(i = 0; i < length; i++)
 	{
 		data_t val;
 		get_vec_element(v, i, &val);

@@ -1,0 +1,84 @@
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <strings.h>
+
+/*//两个参数，-a表示点分十进制，-n表示IP地址*/
+
+/*unsigned int ctoU(const char *UnsignedNumber)*/
+/*{*/
+/*	char *p;*/
+/*	p = UnsignedNumber;*/
+/*	unsigned int bit, ans;*/
+/*	ans = 0x0;*/
+/*	while(*p)*/
+/*	{*/
+/*		if((*p >= '0')&&(*p <= '9'))*/
+/*		{*/
+/*			bit = (unsigned)(*p - '0');*/
+/*		}*/
+/*		else if ((*p >= 'a')&&(*p <= 'f'))*/
+/*		{*/
+/*			bit = (unsigned)(*p - 'a' + 10);*/
+/*		}*/
+/*		else*/
+/*			break;*/
+/*		ans = ans*16 + bit;*/
+/*		p++;*/
+/*	}*/
+/*	return ans;*/
+/*}*/
+
+/*int main(int argc, char **argv)*/
+/*{*/
+/*	if(argc != 3)*/
+/*	{*/
+/*		printf("the number arguments is not correct!\n");*/
+/*		return 0;*/
+/*	}*/
+/*	char *app = "-a";	//表示点分十进制*/
+/*	char *net = "-n";	//表示无符号整型*/
+/*	struct in_addr ad;*/
+/*	char *appchar;*/
+/*	if(!strcmp(argv[1], app))*/
+/*	{*/
+/*		if(inet_aton(argv[2], &ad))*/
+/*		{*/
+/*			unsigned int r = (unsigned int)ntohl((unsigned long int)ad.s_addr);*/
+/*			printf("ip %s to int is 0x%x\n", argv[2], r);*/
+/*			*/
+/*		}*/
+/*		else*/
+/*		{*/
+/*			printf("wrong data!\n");*/
+/*		}*/
+/*	}*/
+/*	else if (!strcmp(argv[1], net))*/
+/*	{*/
+/*		// appchar = argv[2];*/
+/*		// unsigned int r = ctoU(appchar);	//转换过来是大端法， 但机器认为是小端法*/
+/*		//上面是我写的， 下面是书上的方法*/
+/*		unsigned int r;*/
+/*		sscanf(argv[2], "%x", &r);*/
+/*		ad.s_addr = (unsigned int)htonl((unsigned long int)r);	//我将机器认为的小端法改为机器认为的大端法，但实际上是小端法*/
+/*		printf("ad.s_addr = %u\n", ad.s_addr);	//机器的输入输出也是小端法*/
+/*		printf("ip 0x%u to int is %s\n", r, inet_ntoa(ad));*/
+/*	}*/
+/*	return 0;*/
+/*}*/
+
+int main()
+{
+	char *ch = "abc&def";
+	char *p;
+	p = strchr(ch, '&');
+	printf("dsad: %s\n", p);
+	
+	int n1 = 0;
+	char *ch1 = "214";
+	n1 = atoi(ch1);
+	printf("n1 = %d\n", n1);
+	printf("das: %d\n", strcasecmp(ch, "abc"));
+	return 0;
+}
